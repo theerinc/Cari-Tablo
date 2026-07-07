@@ -1,0 +1,101 @@
+// Şantiye Cari & Ön Muhasebe - Prisma şeması
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+enum CariTipi {
+  MUSTERI
+  TEDARIKCI
+  TASERON
+  PERSONEL
+  DIGER
+}
+
+enum OdemeTuru {
+  NAKIT
+  HAVALE
+  CEK
+  SENET
+}
+
+enum IslemYonu {
+  TAHSILAT
+  ODEME
+}
+
+enum IslemDurumu {
+  TAMAMLANDI
+  BEKLEMEDE
+  VADESI_GELDI
+  KARSILIKSIZ
+  IPTAL
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         Role     @default(STAFF)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  olusturduguIslemler Islem[] @relation("OlusturanKullanici")
+  onayladigiIslemler  Islem[] @relation("OnaylayanKullanici")
+}
+
+model Cari {
+  id        String   @id @default(cuid())
+  unvan     String
+  tip       CariTipi @default(DIGER)
+  telefon   String?
+  adres     String?
+  vergiNo   String?
+  notlar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  islemler Islem[]
+
+  @@index([unvan])
+}
+
+model Islem {
+  id        String      @id @default(cuid())
+  cariId    String
+  cari      Cari        @relation(fields: [cariId], references: [id], onDelete: Restrict)
+  tarih     DateTime
+  yon       IslemYonu
+  tutar     Decimal     @db.Decimal(14, 2)
+  odemeTuru OdemeTuru
+  aciklama  String?
+  vadeTarihi DateTime?
+  durum     IslemDurumu @default(TAMAMLANDI)
+
+  olusturanId String
+  olusturan   User    @relation("OlusturanKullanici", fields: [olusturanId], references: [id])
+
+  onaylayanId String?
+  onaylayan   User?   @relation("OnaylayanKullanici", fields: [onaylayanId], references: [id])
+
+  tamamlanmaTarihi DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([cariId])
+  @@index([durum])
+  @@index([odemeTuru])
+  @@index([vadeTarihi])
+}

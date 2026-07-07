@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Şantiye Cari
 
-## Getting Started
+İnşaat işleri için ön muhasebe web uygulaması: cari hesaplar, işlem takibi (nakit/havale/çek/senet) ve vadeli çek-senet onay akışı.
 
-First, run the development server:
+## Özellikler
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Cari Hesaplar**: müşteri/tedarikçi/taşeron/personel cari kayıtları ve hesap ekstresi
+- **İşlemler**: her işlem otomatik olarak ilgili carinin ekstresine yansır
+- **Ödeme türleri**: Nakit, Havale/EFT, Çek, Senet
+- **Vadeli çek/senet**: vadeli işaretlenen çek/senetler cari bakiyeye hemen yansır ama kasa/banka defterine işlenmez; vade günü geldiğinde `/vadeli` sayfasında onay bekler, admin onaylayınca kasaya/bankaya işlenir
+- **Kasa/Banka defterleri**: yalnızca tamamlanmış işlemlerden oluşan çalışan bakiye
+- **Roller**: Yönetici (tüm raporlar + vade onayı + kullanıcı yönetimi) / Personel (cari ve işlem girişi)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Kurulum (Yerel Geliştirme)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Bağımlılıkları kurun:
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Yerel bir Postgres başlatın (Docker gerekmez):
+   ```bash
+   npx prisma dev
+   ```
+   Verilen bağlantı adresini `.env` dosyasındaki `DATABASE_URL` olarak ayarlayın (`.env.example` dosyasını kopyalayıp düzenleyin).
 
-## Learn More
+3. Şemayı veritabanına uygulayın:
+   ```bash
+   npx prisma db push
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. İlk admin kullanıcıyı oluşturun (`.env` içindeki `ADMIN_EMAIL`/`ADMIN_PASSWORD` kullanılır):
+   ```bash
+   npx prisma db seed
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Geliştirme sunucusunu başlatın:
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Production'a Deploy (Vercel + Neon örneği)
 
-## Deploy on Vercel
+1. [Neon](https://neon.tech) (veya Prisma Postgres / Supabase) üzerinde bir Postgres veritabanı oluşturun, bağlantı adresini alın.
+2. Bu repoyu Vercel'e bağlayın, aşağıdaki environment variable'ları girin:
+   - `DATABASE_URL` — hosted Postgres bağlantı adresi
+   - `AUTH_SECRET` — `openssl rand -base64 32` ile üretin
+   - `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME` — ilk kurulumda seed için
+   - `CRON_SECRET` — rastgele bir gizli anahtar
+3. Migration'ı hosted veritabanına uygulayın (yerelde `prisma/migrations/` altında hazır duran migration'ı kullanarak):
+   ```bash
+   DATABASE_URL="<neon-connection-string>" npx prisma migrate deploy
+   DATABASE_URL="<neon-connection-string>" ADMIN_EMAIL=... ADMIN_PASSWORD=... npx prisma db seed
+   ```
+4. Deploy edin. `vercel.json` içindeki cron tanımı, `/api/cron/vade-kontrol` endpoint'ini her gün saat 06:00'da otomatik tetikler ve vadesi geçen çek/senetleri "Vadesi Geldi" durumuna alır (otomatik muhasebeleştirme yapmaz — onay admin tarafından `/vadeli` sayfasından verilir).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Notlar
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Yeni kullanıcı kaydı (signup) sayfası yoktur; kullanıcılar yalnızca `/kullanicilar` sayfasından (admin) eklenir.
+- Para tutarları `Decimal(14,2)` olarak saklanır; kur/çoklu para birimi desteklenmez.
