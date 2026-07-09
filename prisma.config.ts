@@ -10,6 +10,8 @@ export default defineConfig({
     seed: "tsx prisma/seed.ts",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    // CLI/migrasyon işlemleri (db push, migrate deploy, seed) PgBouncer'ı atlayıp
+    // doğrudan bağlantı kullanmalı. DIRECT_URL yoksa (örn. yerel geliştirmede) DATABASE_URL'e düşer.
+    url: process.env["DIRECT_URL"] ?? process.env["DATABASE_URL"],
   },
 });
