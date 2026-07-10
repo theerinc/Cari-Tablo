@@ -1,10 +1,31 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getDefterBakiye, getPortfoyToplami } from "@/lib/balances";
+import { getZamanSerisi, type Metrik, type Periyot } from "@/lib/analytics";
 import { formatTutar } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AnalizFiltreForm } from "./analiz-filtre-form";
+import { AnalizChart } from "@/components/analiz-chart";
 
-export default async function DashboardPage() {
+const GECERLI_PERIYOTLAR: Periyot[] = ["GUNLUK", "HAFTALIK", "AYLIK", "CEYREKLIK", "YILLIK"];
+const GECERLI_METRIKLER: Metrik[] = ["KASA", "BANKA", "CARI_NET", "CEK_SENET"];
+
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ periyot?: string; metrik?: string | string[] }>;
+}) {
+  const params = await searchParams;
+
+  const periyot: Periyot = GECERLI_PERIYOTLAR.includes(params.periyot as Periyot)
+    ? (params.periyot as Periyot)
+    : "AYLIK";
+
+  const secilenMetrikler = (
+    Array.isArray(params.metrik) ? params.metrik : params.metrik ? [params.metrik] : []
+  ).filter((m): m is Metrik => GECERLI_METRIKLER.includes(m as Metrik));
+  const metrikler: Metrik[] = secilenMetrikler.length > 0 ? secilenMetrikler : ["KASA", "BANKA"];
+
   const [
     kasaBakiye,
     bankaBakiye,
@@ -13,6 +34,7 @@ export default async function DashboardPage() {
     vadesiGelenSayisi,
     yaklasanSayisi,
     cariToplam,
+    ...serilerListesi
   ] = await Promise.all([
     getDefterBakiye("NAKIT"),
     getDefterBakiye("HAVALE"),
@@ -21,7 +43,12 @@ export default async function DashboardPage() {
     prisma.islem.count({ where: { durum: "VADESI_GELDI" } }),
     prisma.islem.count({ where: { durum: "BEKLEMEDE" } }),
     prisma.islem.groupBy({ by: ["yon"], _sum: { tutar: true } }),
+    ...metrikler.map((m) => getZamanSerisi(m, periyot)),
   ]);
+
+  const seriler = Object.fromEntries(
+    metrikler.map((m, i) => [m, serilerListesi[i]]),
+  ) as Partial<Record<Metrik, (typeof serilerListesi)[number]>>;
 
   let netCariBakiye = 0;
   for (const row of cariToplam) {
@@ -119,6 +146,16 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Analiz</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <AnalizFiltreForm periyot={periyot} metrikler={metrikler} />
+          <AnalizChart periyot={periyot} metrikler={metrikler} seriler={seriler} />
+        </CardContent>
+      </Card>
     </div>
   );
 }
