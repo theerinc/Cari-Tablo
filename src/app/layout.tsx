@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Şantiye Cari",
+  title: "Cari.o",
   description: "İnşaat ön muhasebe ve cari hesap takip uygulaması",
 };
 

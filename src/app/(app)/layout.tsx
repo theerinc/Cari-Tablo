@@ -20,7 +20,7 @@ export default async function AppLayout({
       <header className="border-b bg-background">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <span className="text-lg font-semibold">Şantiye Cari</span>
+            <span className="text-lg font-semibold">Cari.o</span>
             <Nav isAdmin={isAdmin} />
           </div>
           <div className="flex items-center gap-3">

@@ -1,4 +1,4 @@
-# Şantiye Cari
+# Cari.o
 
 İnşaat işleri için ön muhasebe web uygulaması: cari hesaplar, işlem takibi (nakit/havale/çek/senet) ve vadeli çek-senet onay akışı.
 
