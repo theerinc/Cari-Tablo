@@ -19,12 +19,12 @@ import type { Islem, Cari } from "@/generated/prisma/client";
 
 type IslemRow = Islem & { cari?: Cari };
 
-const DURUM_VARIANT: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
-  TAMAMLANDI: "secondary",
-  BEKLEMEDE: "outline",
-  VADESI_GELDI: "default",
+const DURUM_VARIANT: Record<string, "success" | "warning" | "destructive" | "outline"> = {
+  TAMAMLANDI: "success",
+  BEKLEMEDE: "warning",
+  VADESI_GELDI: "destructive",
   KARSILIKSIZ: "destructive",
-  IPTAL: "destructive",
+  IPTAL: "outline",
 };
 
 export function IslemTable({
@@ -84,8 +84,8 @@ export function IslemTable({
                 {islem.aciklama ?? "-"}
               </TableCell>
               <TableCell
-                className={`text-right font-medium ${
-                  islem.yon === "TAHSILAT" ? "text-emerald-600" : "text-red-600"
+                className={`text-right font-mono font-medium tabular-nums ${
+                  islem.yon === "TAHSILAT" ? "text-success" : "text-destructive"
                 }`}
               >
                 {islem.yon === "TAHSILAT" ? "+" : "-"}

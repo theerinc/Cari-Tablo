@@ -56,7 +56,7 @@ export default async function VadeliPage() {
               {vadesiGelenler.map((islem) => (
                 <TableRow key={islem.id}>
                   <TableCell>
-                    <Badge variant="default">
+                    <Badge variant="destructive">
                       {formatTarih(islem.vadeTarihi!)}
                     </Badge>
                   </TableCell>
@@ -72,7 +72,7 @@ export default async function VadeliPage() {
                   <TableCell className="text-muted-foreground">
                     {islem.aciklama ?? "-"}
                   </TableCell>
-                  <TableCell className="text-right font-medium">
+                  <TableCell className="text-right font-mono font-medium tabular-nums">
                     {formatTutar(islem.tutar.toString())}
                   </TableCell>
                   <TableCell>
@@ -110,7 +110,11 @@ export default async function VadeliPage() {
             <TableBody>
               {yaklasanlar.map((islem) => (
                 <TableRow key={islem.id}>
-                  <TableCell>{formatTarih(islem.vadeTarihi!)}</TableCell>
+                  <TableCell>
+                    <Badge variant="warning">
+                      {formatTarih(islem.vadeTarihi!)}
+                    </Badge>
+                  </TableCell>
                   <TableCell>
                     <Link
                       href={`/cariler/${islem.cariId}`}
@@ -123,7 +127,7 @@ export default async function VadeliPage() {
                   <TableCell className="text-muted-foreground">
                     {islem.aciklama ?? "-"}
                   </TableCell>
-                  <TableCell className="text-right font-medium">
+                  <TableCell className="text-right font-mono font-medium tabular-nums">
                     {formatTutar(islem.tutar.toString())}
                   </TableCell>
                 </TableRow>

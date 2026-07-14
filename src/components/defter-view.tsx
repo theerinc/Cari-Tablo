@@ -33,7 +33,7 @@ export async function DefterView({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-semibold">{formatTutar(toplamBakiye)}</p>
+          <p className="font-mono text-2xl font-semibold tabular-nums">{formatTutar(toplamBakiye)}</p>
         </CardContent>
       </Card>
 
@@ -61,14 +61,14 @@ export async function DefterView({
                   {k.aciklama ?? "-"}
                 </TableCell>
                 <TableCell
-                  className={`text-right font-medium ${
-                    k.yon === "TAHSILAT" ? "text-emerald-600" : "text-red-600"
+                  className={`text-right font-mono font-medium tabular-nums ${
+                    k.yon === "TAHSILAT" ? "text-success" : "text-destructive"
                   }`}
                 >
                   {k.yon === "TAHSILAT" ? "+" : "-"}
                   {formatTutar(k.tutar.toString())}
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right font-mono tabular-nums">
                   {formatTutar(k.calisanBakiye)}
                 </TableCell>
               </TableRow>

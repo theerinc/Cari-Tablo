@@ -81,11 +81,11 @@ export default async function CarilerPage({
                     {cari.telefon ?? "-"}
                   </TableCell>
                   <TableCell
-                    className={`text-right font-medium ${
+                    className={`text-right font-mono font-medium tabular-nums ${
                       bakiye > 0
-                        ? "text-emerald-600"
+                        ? "text-success"
                         : bakiye < 0
-                          ? "text-red-600"
+                          ? "text-destructive"
                           : ""
                     }`}
                   >

@@ -50,11 +50,11 @@ export default async function CariDetayPage({
           </CardHeader>
           <CardContent>
             <p
-              className={`text-2xl font-semibold ${
+              className={`font-mono text-2xl font-semibold tabular-nums ${
                 bakiye > 0
-                  ? "text-emerald-600"
+                  ? "text-success"
                   : bakiye < 0
-                    ? "text-red-600"
+                    ? "text-destructive"
                     : ""
               }`}
             >

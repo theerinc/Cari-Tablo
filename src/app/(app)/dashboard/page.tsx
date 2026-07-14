@@ -70,7 +70,7 @@ export default async function DashboardPage({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{formatTutar(kasaBakiye)}</p>
+            <p className="font-mono text-2xl font-semibold tabular-nums">{formatTutar(kasaBakiye)}</p>
           </CardContent>
         </Card>
 
@@ -83,7 +83,7 @@ export default async function DashboardPage({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{formatTutar(bankaBakiye)}</p>
+            <p className="font-mono text-2xl font-semibold tabular-nums">{formatTutar(bankaBakiye)}</p>
           </CardContent>
         </Card>
 
@@ -94,7 +94,7 @@ export default async function DashboardPage({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{formatTutar(cekPortfoyu)}</p>
+            <p className="font-mono text-2xl font-semibold tabular-nums">{formatTutar(cekPortfoyu)}</p>
           </CardContent>
         </Card>
 
@@ -105,7 +105,7 @@ export default async function DashboardPage({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{formatTutar(senetPortfoyu)}</p>
+            <p className="font-mono text-2xl font-semibold tabular-nums">{formatTutar(senetPortfoyu)}</p>
           </CardContent>
         </Card>
 
@@ -116,7 +116,7 @@ export default async function DashboardPage({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{formatTutar(netCariBakiye)}</p>
+            <p className="font-mono text-2xl font-semibold tabular-nums">{formatTutar(netCariBakiye)}</p>
           </CardContent>
         </Card>
 
